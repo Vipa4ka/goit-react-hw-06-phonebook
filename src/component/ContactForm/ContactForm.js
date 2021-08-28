@@ -3,10 +3,11 @@ import { v4 as uuidv4 } from "uuid";
 import PropTypes from "prop-types";
 
 import styles from "./ContactForm.module.scss";
+import { connect } from "react-redux";
 
-const nameInputId = uuidv4();
+import contactsActions from "../../redux/contacts-actions";
 
-export default function ContactForm({ onSubmit }) {
+function ContactForm({ onSubmit }) {
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
 
@@ -41,23 +42,24 @@ export default function ContactForm({ onSubmit }) {
   return (
     <form onSubmit={handleSubmit}>
       <div className={styles.container}>
-        <label className={styles.label} htmlFor={nameInputId}>
+        <label className={styles.label} htmlFor={uuidv4()}>
           Name{" "}
           <input
             className={styles.input}
             type="text"
             name="name"
             value={name}
-            id={nameInputId}
+            id={uuidv4()}
             onChange={handleChange}
             pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
             title="Имя может состоять только из букв, апострофа, тире и пробелов. Например Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan и т. п."
             required
           />
         </label>
-        <label className={styles.label} htmlFor={uuidv4()}>
-          Number{" "}
+        <label className={styles.label}>
+          Number
           <input
+            id={uuidv4()}
             className={styles.input}
             type="tel"
             name="number"
@@ -78,3 +80,10 @@ export default function ContactForm({ onSubmit }) {
 ContactForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
 };
+
+const mapDispatchToProps = (dispatch) => ({
+  onSubmit: (name, number) =>
+    dispatch(contactsActions.addContacts(name, number)),
+});
+
+export default connect(null, mapDispatchToProps)(ContactForm);
